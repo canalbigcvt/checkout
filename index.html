@@ -202,49 +202,57 @@
 
         // Evento do formulário de checkout
         document.getElementById('checkout-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    e.preventDefault();
 
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
 
-            try {
-                // Criar pagamento PIX via API do Mercado Pago
-                const response = await fetch('https://api.mercadopago.com/v1/payments', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer APP_USR-4429111230022333-010606-345cd99e3803d0955ac386596b54a3f4-535512320',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        transaction_amount: PRODUCT_PRICE,
-                        payment_method_id: 'pix',
-                        payer: {
-                            email: email,
-                            first_name: fullName.split(' ')[0],
-                            last_name: fullName.split(' ').slice(1).join(' ')
-                        }
-                    })
-                });
-
-                const data = await response.json();
-
-                // Exibir QR Code e código PIX
-                if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
-                    document.getElementById('qrCode').src = data.point_of_interaction.transaction_data.qr_code_base64;
-                    document.getElementById('pixCode').textContent = data.point_of_interaction.transaction_data.qr_code;
-                    document.getElementById('pixContainer').style.display = 'block';
-
-                    // Verificar status do pagamento
-                    checkPaymentStatus(data.id);
-                } else {
-                    alert('Erro ao gerar o código PIX.');
+    try {
+        // Criar pagamento PIX via API do Mercado Pago
+        const response = await fetch('https://api.mercadopago.com/v1/payments', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer APP_USR-4429111230022333-010606-345cd99e3803d0955ac386596b54a3f4-535512320',  // Sua chave de acesso
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                transaction_amount: PRODUCT_PRICE,
+                payment_method_id: 'pix',
+                payer: {
+                    email: email,
+                    first_name: fullName.split(' ')[0],
+                    last_name: fullName.split(' ').slice(1).join(' ')
                 }
-
-            } catch (error) {
-                console.error('Erro ao gerar PIX:', error);
-                alert('Erro ao gerar o PIX. Por favor, tente novamente.');
-            }
+            })
         });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            // Exibir mensagem detalhada do erro da API
+            console.error('Erro ao gerar pagamento:', data);
+            alert(`Erro ao gerar o PIX: ${data.message || 'Erro desconhecido. Tente novamente mais tarde.'}`);
+            return;
+        }
+
+        // Exibir QR Code e código PIX
+        if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
+            document.getElementById('qrCode').src = data.point_of_interaction.transaction_data.qr_code_base64;
+            document.getElementById('pixCode').textContent = data.point_of_interaction.transaction_data.qr_code;
+            document.getElementById('pixContainer').style.display = 'block';
+
+            // Verificar status do pagamento
+            checkPaymentStatus(data.id);
+        } else {
+            alert('Erro ao gerar o código PIX.');
+        }
+
+    } catch (error) {
+        console.error('Erro ao gerar PIX:', error);
+        alert(`Erro ao gerar o PIX: ${error.message || 'Tente novamente mais tarde.'}`);
+    }
+});
+
 
         // Função para copiar o código PIX
         function copyPixCode() {
