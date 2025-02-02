@@ -131,10 +131,7 @@
     </div>
 
     <script>
-        // Configuração do Mercado Pago - chave de sandbox para testes
-        const mp = new MercadoPago('APP_USR-c3dbca07-5326-4ab6-bc75-9fdd77b6b282');  // Chave sandbox
-
-        // Valor do produto
+        const API_KEY = '13130|t55kdxjIHj00mgNoOfqP67tl7mLZWr1h0fryiKxZe430a5d6';
         const PRODUCT_PRICE = 1.00;
 
         document.getElementById('checkout-form').addEventListener('submit', async (e) => {
@@ -144,39 +141,33 @@
             const email = document.getElementById('email').value;
 
             try {
-                // Criar pagamento PIX
-                const response = await fetch('https://api.mercadopago.com/v1/payments', {
+                // Requisição para a PushinPay para criar o pagamento PIX
+                const response = await fetch('https://api.pushinpay.com.br/v1/pix/gerar', {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer APP_USR-c3dbca07-5326-4ab6-bc75-9fdd77b6b282', // Chave sandbox
+                        'Authorization': `Bearer ${API_KEY}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        transaction_amount: PRODUCT_PRICE,
-                        payment_method_id: 'pix',
-                        payer: {
-                            email: email,
-                            first_name: fullName.split(' ')[0],
-                            last_name: fullName.split(' ').slice(1).join(' ')
-                        }
+                        amount: PRODUCT_PRICE,
+                        payer_name: fullName,
+                        payer_email: email
                     })
                 });
 
                 const data = await response.json();
 
-                if (data.status !== 'approved') {
+                if (response.ok && data.qr_code_base64) {
+                    // Exibe o QR Code
+                    document.getElementById('qrCode').src = data.qr_code_base64;
+                    document.getElementById('pixCode').textContent = data.qr_code;
+                    document.getElementById('pixContainer').style.display = 'block';
+
+                    // Inicia a verificação do status do pagamento
+                    checkPaymentStatus(data.payment_id);
+                } else {
                     alert('Erro ao gerar o PIX. Tente novamente.');
-                    return;
                 }
-
-                // Mostrar QR Code e código PIX
-                document.getElementById('qrCode').src = data.point_of_interaction.transaction_data.qr_code_base64;
-                document.getElementById('pixCode').textContent = data.point_of_interaction.transaction_data.qr_code;
-                document.getElementById('pixContainer').style.display = 'block';
-
-                // Iniciar verificação do status do pagamento
-                checkPaymentStatus(data.id);
-
             } catch (error) {
                 console.error('Erro ao gerar PIX:', error);
                 alert('Erro ao gerar o PIX. Por favor, tente novamente.');
@@ -192,9 +183,9 @@
         async function checkPaymentStatus(paymentId) {
             const checkStatus = async () => {
                 try {
-                    const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+                    const response = await fetch(`https://api.pushinpay.com.br/v1/pix/status/${paymentId}`, {
                         headers: {
-                            'Authorization': 'Bearer APP_USR-c3dbca07-5326-4ab6-bc75-9fdd77b6b282' // Chave sandbox
+                            'Authorization': `Bearer ${API_KEY}`
                         }
                     });
 
@@ -214,7 +205,7 @@
                 }
             };
 
-            // Verificar a cada 5 segundos
+            // Verificar o status do pagamento a cada 5 segundos
             const interval = setInterval(async () => {
                 const isApproved = await checkStatus();
                 if (isApproved) {
