@@ -196,7 +196,7 @@
         const mp = new MercadoPago('APP_USR-4429111230022333-010606-345cd99e3803d0955ac386596b54a3f4-535512320');
 
         // Valor do produto (edite aqui)
-        const PRODUCT_PRICE = 97.00;
+        const PRODUCT_PRICE = 1.00;
         
         document.getElementById('checkout-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -259,7 +259,7 @@
                     if (data.status === 'approved') {
                         document.getElementById('pixContainer').style.display = 'none';
                         document.getElementById('successMessage').style.display = 'block';
-                        document.getElementById('productLink').href = 'LINK_DO_SEU_PRODUTO_AQUI';
+                        document.getElementById('productLink').href = 'https://www.portalalomotorista.com.br/';
                         return true;
                     }
 
