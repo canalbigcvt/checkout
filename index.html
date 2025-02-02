@@ -6,7 +6,6 @@
     <title>Checkout PIX</title>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <style>
-        /* Estilos do checkout */
         :root {
             --primary: #8B5CF6;
             --primary-dark: #7C3AED;
@@ -84,6 +83,15 @@
             background: var(--primary);
             color: white;
         }
+        .success-message {
+            display: none;
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #DEF7EC;
+            color: #03543F;
+            border-radius: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -123,7 +131,7 @@
     </div>
 
     <script>
-        // Configuração do Mercado Pago - usando a chave de sandbox
+        // Configuração do Mercado Pago - chave de sandbox para testes
         const mp = new MercadoPago('APP_USR-c3dbca07-5326-4ab6-bc75-9fdd77b6b282');  // Chave sandbox
 
         // Valor do produto
@@ -155,6 +163,11 @@
                 });
 
                 const data = await response.json();
+
+                if (data.status !== 'approved') {
+                    alert('Erro ao gerar o PIX. Tente novamente.');
+                    return;
+                }
 
                 // Mostrar QR Code e código PIX
                 document.getElementById('qrCode').src = data.point_of_interaction.transaction_data.qr_code_base64;
