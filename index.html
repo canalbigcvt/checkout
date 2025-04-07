@@ -15,10 +15,11 @@
       font-family: Arial, sans-serif;
       background-color: #121212;
       color: #fff;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      padding: 20px;
     }
 
     .checkout-wrapper {
@@ -30,10 +31,11 @@
       overflow: hidden;
       max-width: 960px;
       width: 100%;
+      flex-wrap: wrap;
     }
 
     .product-container, .form-container {
-      flex: 1;
+      flex: 1 1 300px;
       padding: 30px;
     }
 
@@ -114,6 +116,27 @@
       max-width: 280px;
     }
 
+    .pix-copy {
+      margin-top: 10px;
+      background: #222;
+      padding: 10px;
+      border-radius: 6px;
+      color: #ccc;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      margin-top: 10px;
+      background-color: #444;
+      padding: 8px 12px;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
     #status {
       margin-top: 15px;
       font-weight: bold;
@@ -125,16 +148,6 @@
 
     .error {
       color: #ff1744;
-    }
-
-    @media (max-width: 768px) {
-      .checkout-wrapper {
-        flex-direction: column;
-      }
-
-      .product-container, .form-container {
-        padding: 20px;
-      }
     }
   </style>
 </head>
@@ -159,6 +172,8 @@
       </div>
       <button onclick="criarPagamento()">Gerar QR Code</button>
       <div id="qrcode" class="qr-container"></div>
+      <div id="pixcode" class="pix-copy"></div>
+      <div id="copyButton" class="copy-btn" onclick="copiarPix()" style="display:none">Copiar código Pix</div>
       <div id="status"></div>
     </div>
   </div>
@@ -202,8 +217,10 @@
 
         const data = await response.json();
 
-        if (data.qr_code_base64 && data.id) {
+        if (data.qr_code_base64 && data.id && data.qr_code) {
           document.getElementById("qrcode").innerHTML = `<img src='${data.qr_code_base64}' alt='QR Code Pix'>`;
+          document.getElementById("pixcode").innerText = data.qr_code;
+          document.getElementById("copyButton").style.display = "inline-block";
           document.getElementById("status").innerText = "Aguardando pagamento...";
           document.getElementById("status").className = "";
           verificarPagamento(data.id);
@@ -242,6 +259,15 @@
           console.error("Erro ao verificar pagamento", error);
         }
       }, 5000);
+    }
+
+    function copiarPix() {
+      const pixCode = document.getElementById("pixcode").innerText;
+      navigator.clipboard.writeText(pixCode).then(() => {
+        alert("Código Pix copiado com sucesso!");
+      }, () => {
+        alert("Erro ao copiar o código Pix.");
+      });
     }
   </script>
 </body>
