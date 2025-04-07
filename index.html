@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Pagamento via Pix</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .checkout-wrapper {
+      display: flex;
+      flex-direction: row;
+      background-color: #1e1e1e;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      max-width: 960px;
+      width: 100%;
+    }
+
+    .product-container, .form-container {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .product-container {
+      background-color: #2a2a2a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .product-container img {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .product-name {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .product-description {
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      color: #00c853;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    input:focus {
+      outline: 2px solid #00c853;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #00c853;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #009b3a;
+    }
+
+    .qr-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #qrcode img {
+      width: 100%;
+      max-width: 280px;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #00e676;
+    }
+
+    .error {
+      color: #ff1744;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-wrapper {
+        flex-direction: column;
+      }
+
+      .product-container, .form-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="checkout-wrapper">
+    <div class="product-container">
+      <img src="https://i0.wp.com/eduka.ai/wp-content/uploads/2024/04/IA_infoprodutos_renda_extra_sem_sair_de_casa.webp?resize=696%2C696&ssl=1" alt="Produto">
+      <p class="product-name">Produto Exemplo</p>
+      <p class="product-description">Descrição breve do produto que está sendo adquirido.</p>
+    </div>
+
+    <div class="form-container">
+      <h2>Pagamento via Pix</h2>
+      <div class="input-group">
+        <input type="text" id="nome" placeholder="Digite seu nome">
+      </div>
+      <div class="input-group">
+        <input type="email" id="email" placeholder="Digite seu e-mail">
+      </div>
+      <div class="input-group">
+        <input type="tel" id="telefone" placeholder="Digite seu telefone (opcional)">
+      </div>
+      <button onclick="criarPagamento()">Gerar QR Code</button>
+      <div id="qrcode" class="qr-container"></div>
+      <div id="status"></div>
+    </div>
+  </div>
+
+  <script>
+    function validarFormulario(nome, email) {
+      if (!nome || !email) {
+        alert("Preencha todos os campos obrigatórios.");
+        return false;
+      }
+      const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!regex.test(email)) {
+        alert("Por favor, insira um e-mail válido.");
+        return false;
+      }
+      return true;
+    }
+
+    async function criarPagamento() {
+      const nome = document.getElementById("nome").value;
+      const email = document.getElementById("email").value;
+      const telefone = document.getElementById("telefone").value;
+
+      if (!validarFormulario(nome, email)) return;
+
+      const token = "22418|HVBuEG5B4g8Vk9d6QP8HfeMTLpMS9qr4kPgJtH0H398dc457";
+      const url = "https://api.pushinpay.com.br/api/pix/cashIn";
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            value: 1000,
+            webhook_url: "https://seusite.com/webhook"
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.qr_code_base64 && data.id) {
+          document.getElementById("qrcode").innerHTML = `<img src='${data.qr_code_base64}' alt='QR Code Pix'>`;
+          document.getElementById("status").innerText = "Aguardando pagamento...";
+          document.getElementById("status").className = "";
+          verificarPagamento(data.id);
+        } else {
+          document.getElementById("status").innerText = "Erro ao gerar QR Code";
+          document.getElementById("status").className = "error";
+        }
+      } catch (error) {
+        console.error("Erro na requisição:", error);
+        document.getElementById("status").innerText = "Erro ao conectar à API";
+        document.getElementById("status").className = "error";
+      }
+    }
+
+    async function verificarPagamento(transactionId) {
+      const token = "22418|HVBuEG5B4g8Vk9d6QP8HfeMTLpMS9qr4kPgJtH0H398dc457";
+      const url = `https://api.pushinpay.com.br/api/transactions/${transactionId}`;
+
+      const intervalo = setInterval(async () => {
+        try {
+          const response = await fetch(url, {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          const data = await response.json();
+
+          if (data.status === "paid") {
+            clearInterval(intervalo);
+            document.getElementById("status").innerText = "Pagamento confirmado!";
+            document.getElementById("status").className = "success";
+            setTimeout(() => {
+              window.location.href = "https://www.facebook.com";
+            }, 2000);
+          }
+        } catch (error) {
+          console.error("Erro ao verificar pagamento", error);
+        }
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
