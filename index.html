@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout - Pagamento via Pix</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout com Produtos Extras</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,21 +13,22 @@
 
     body {
       font-family: Arial, sans-serif;
-      background-color: #121212;
+      background-color: #000;
       color: #fff;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      flex-direction: column;
     }
 
     .checkout-wrapper {
       display: flex;
       flex-direction: row;
       background-color: #1e1e1e;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.979);
       overflow: hidden;
       max-width: 960px;
       width: 100%;
@@ -44,13 +45,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       text-align: center;
     }
 
     .product-container img {
       width: 100%;
       max-width: 320px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
       border-radius: 12px;
       margin-bottom: 20px;
     }
@@ -149,16 +151,95 @@
     .error {
       color: #ff1744;
     }
+
+    /* Seção dos produtos extras */
+    .extra-products-wrapper {
+      max-width: 960px;
+      width: 100%;
+      margin-top: 30px;
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .extra-product {
+      background-color: #2a2a2a;
+      flex: 1 1 30%;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .extra-product img {
+      width: 60%; /*tamanho da imagem dos order bomper*/
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .extra-product .product-name {
+      font-size: 1rem;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .extra-product .product-price {
+      color: #00c853;
+      margin-bottom: 10px;
+    }
+
+    .extra-product button {
+      width: 100%;
+      padding: 10px;
+      background-color: #00c853;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .extra-product button:hover {
+      background-color: #009b3a;
+    }
+
+    @media (max-width: 768px) {
+      .extra-products-wrapper {
+        flex-direction: column;
+      }
+
+      .extra-product {
+        flex: 1 1 100%;
+      }
+      
+    }
+    .footer-bar {
+  width: 100%;
+  background-color: #111;
+  padding: 20px;
+  margin-top: 40px;
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+  border-top: 1px solid #222;
+}
+
+.footer-bar p {
+  margin: 0;
+}
+
   </style>
 </head>
 <body>
+
+  <!-- Checkout principal -->
   <div class="checkout-wrapper">
     <div class="product-container">
-      <img src="https://i0.wp.com/eduka.ai/wp-content/uploads/2024/04/IA_infoprodutos_renda_extra_sem_sair_de_casa.webp?resize=696%2C696&ssl=1" alt="Produto">
+      <img src="https://i0.wp.com/eduka.ai/wp-content/uploads/2024/04/IA_infoprodutos_renda_extra_sem_sair_de_casa.webp?resize=696%2C696&ssl=1" alt="Produto Principal" />
       <p class="product-name">Produto Exemplo</p>
       <p class="product-description">Descrição breve do produto que está sendo adquirido.</p>
     </div>
-
     <div class="form-container">
       <h2>Pagamento via Pix</h2>
       <div class="input-group">
@@ -175,6 +256,28 @@
       <div id="pixcode" class="pix-copy"></div>
       <div id="copyButton" class="copy-btn" onclick="copiarPix()" style="display:none">Copiar código Pix</div>
       <div id="status"></div>
+    </div>
+  </div>
+
+  <!-- Produtos adicionais embaixo -->
+  <div class="extra-products-wrapper">
+    <div class="extra-product">
+      <img src="https://hotmart.s3.amazonaws.com/product_contents/ce6bf40f-f574-48e8-9969-d533d0614118/boxinfoprodutomilionario.png" alt="Produto 1">
+      <p class="product-name">Produto 1</p>
+      <p class="product-price">R$ 50,00</p>
+      <a href="#"><button>Comprar</button></a>
+    </div>
+    <div class="extra-product">
+      <img src="https://hotmart.s3.amazonaws.com/product_contents/ce6bf40f-f574-48e8-9969-d533d0614118/boxinfoprodutomilionario.png" alt="Produto 2">
+      <p class="product-name">Produto 2</p>
+      <p class="product-price">R$ 60,00</p>
+      <a href="#"><button>Comprar</button></a>
+    </div>
+    <div class="extra-product">
+      <img src="https://hotmart.s3.amazonaws.com/product_contents/ce6bf40f-f574-48e8-9969-d533d0614118/boxinfoprodutomilionario.png" alt="Produto 3">
+      <p class="product-name">Produto 3</p>
+      <p class="product-price">R$ 70,00</p>
+      <a href="#"><button>Comprar</button></a>
     </div>
   </div>
 
@@ -270,5 +373,9 @@
       });
     }
   </script>
+  <footer class="footer-bar">
+    <p>&copy; 2025 Seu Nome ou Empresa. Todos os direitos reservados.</p>
+  </footer>
+  
 </body>
 </html>
