@@ -13,39 +13,83 @@
 
     body {
       font-family: Arial, sans-serif;
-      background-color: #000;
-      color: #fff;
+      background-image: url('https://wallpapers-clan.com/wp-content/uploads/2024/03/starfall-night-sky-mountains-aesthetic-gif-preview-desktop-wallpaper.gif');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
       flex-direction: column;
+      color: #fff;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
 
     .checkout-wrapper {
       display: flex;
       flex-direction: row;
-      background-color: #1e1e1e;
-      border-radius: 4px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.979);
-      overflow: hidden;
       max-width: 960px;
       width: 100%;
       flex-wrap: wrap;
+      gap: 10px;
+      animation: slideUp 0.8s ease-out;
     }
 
-    .product-container, .form-container {
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .product-container,
+    .form-container,
+    .extra-product,
+    .footer-bar {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .product-container,
+    .form-container {
       flex: 1 1 300px;
       padding: 30px;
     }
 
     .product-container {
-      background-color: #2a2a2a;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       text-align: center;
+      animation: zoomIn 0.8s ease-in-out;
+    }
+
+    @keyframes zoomIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .product-container img {
@@ -55,6 +99,11 @@
       object-fit: cover;
       border-radius: 12px;
       margin-bottom: 20px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .product-container img:hover {
+      transform: scale(1.05);
     }
 
     .product-name {
@@ -65,12 +114,12 @@
 
     .product-description {
       font-size: 0.95rem;
-      color: #ccc;
+      color: #eee;
     }
 
     .form-container h2 {
       margin-bottom: 20px;
-      color: #00c853;
+      color: #00e676;
     }
 
     .input-group {
@@ -82,30 +131,34 @@
     input[type="tel"] {
       width: 100%;
       padding: 12px;
-      border: none;
+      background-color: transparent;
+      border: 1px solid #ffffff;
       border-radius: 6px;
-      background-color: #333;
       color: #fff;
+      transition: box-shadow 0.3s ease-in-out;
     }
 
     input:focus {
-      outline: 2px solid #00c853;
+      outline: 2px solid #00e676;
+      background-color: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 8px rgba(0, 230, 118, 0.7);
     }
 
     button {
       width: 100%;
       padding: 12px;
-      background-color: #00c853;
+      background-color: #00e676;
       color: #fff;
       border: none;
       border-radius: 6px;
       font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, transform 0.3s;
     }
 
     button:hover {
-      background-color: #009b3a;
+      background-color: #00c853;
+      transform: translateY(-2px);
     }
 
     .qr-container {
@@ -120,10 +173,10 @@
 
     .pix-copy {
       margin-top: 10px;
-      background: #222;
+      background: rgba(0, 0, 0, 0.3);
       padding: 10px;
       border-radius: 6px;
-      color: #ccc;
+      color: #fff;
       font-size: 0.9rem;
       word-break: break-all;
     }
@@ -137,6 +190,11 @@
       cursor: pointer;
       display: inline-block;
       font-size: 0.9rem;
+      transition: background-color 0.3s;
+    }
+
+    .copy-btn:hover {
+      background-color: #666;
     }
 
     #status {
@@ -152,7 +210,6 @@
       color: #ff1744;
     }
 
-    /* Seção dos produtos extras */
     .extra-products-wrapper {
       max-width: 960px;
       width: 100%;
@@ -161,22 +218,32 @@
       gap: 10px;
       justify-content: space-between;
       flex-wrap: wrap;
+      display: none /*oculta o ordem boper*/
     }
 
     .extra-product {
-      background-color: #2a2a2a;
       flex: 1 1 30%;
-      border-radius: px;
       padding: 15px;
       text-align: center;
+      color: #fff;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .extra-product:hover {
+      transform: scale(1.05);
     }
 
     .extra-product img {
-      width: 60%; /*tamanho da imagem dos order bomper*/
+      width: 60%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
       border-radius: 10px;
       margin-bottom: 10px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .extra-product img:hover {
+      transform: scale(1.1);
     }
 
     .extra-product .product-name {
@@ -186,25 +253,31 @@
     }
 
     .extra-product .product-price {
-      color: #00c853;
+      color: #00e676;
       margin-bottom: 10px;
     }
 
     .extra-product button {
       width: 100%;
       padding: 10px;
-      background-color: #00c853;
+      background-color: #00e676;
       color: #fff;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
     }
 
     .extra-product button:hover {
-      background-color: #009b3a;
+      background-color: #00c853;
+      transform: translateY(-2px);
     }
 
     @media (max-width: 768px) {
+      .checkout-wrapper {
+        flex-direction: column;
+      }
+
       .extra-products-wrapper {
         flex-direction: column;
       }
@@ -214,21 +287,15 @@
       }
       
     }
+
     .footer-bar {
-  width: 100%;
-  background-color: #111;
-  padding: 20px;
-  margin-top: 40px;
-  text-align: center;
-  color: #888;
-  font-size: 0.9rem;
-  border-top: 1px solid #222;
-}
-
-.footer-bar p {
-  margin: 0;
-}
-
+      width: 100%;
+      padding: 20px;
+      margin-top: 40px;
+      text-align: center;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -258,8 +325,10 @@
       <div id="status"></div>
     </div>
   </div>
+<div class="extra-products-wrapper" style="display: block;">
 
-  <!-- Produtos adicionais embaixo -->
+  <!-- Produtos adicionais -->
+   
   <div class="extra-products-wrapper">
     <div class="extra-product">
       <img src="https://hotmart.s3.amazonaws.com/product_contents/ce6bf40f-f574-48e8-9969-d533d0614118/boxinfoprodutomilionario.png" alt="Produto 1">
@@ -280,6 +349,10 @@
       <a href="#"><button>Comprar</button></a>
     </div>
   </div>
+
+  <footer class="footer-bar">
+    <p>&copy; 2025 Seu Nome ou Empresa. Todos os direitos reservados.</p>
+  </footer>
 
   <script>
     function validarFormulario(nome, email) {
@@ -373,9 +446,5 @@
       });
     }
   </script>
-  <footer class="footer-bar">
-    <p>&copy; 2025 Seu Nome ou Empresa. Todos os direitos reservados.</p>
-  </footer>
-  
 </body>
 </html>
